@@ -1,10 +1,12 @@
-echo "vm.max_map_count=262144" >> /etc/sysctl.conf
-systcl -p
+## Preparation:
 
+Fix sysctl settings
 
-docker-compose restart filebeat
+> echo "vm.max_map_count=262144" >> /etc/sysctl.conf && systcl -p
 
-Stack Management --> Index patterns
+## How to create index templates
 
-create index pattern --> name: nginx-* --> time field: @timestamp
+1. Open Stack Management
+2. Go to the Index patterns
+3. Choose Create index pattern --> Name: nginx-* --> time field: @timestamp
 
