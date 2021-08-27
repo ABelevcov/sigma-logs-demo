@@ -5,8 +5,9 @@ services:
     container_name: es01
     environment:
       - node.name=es01
+      - discovery.seed_hosts=es02
       - cluster.name=es-cluster
-      - cluster.initial_master_nodes=es01
+      - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512M -Xmx512M"
       - http.cors.enabled=true
@@ -39,11 +40,11 @@ services:
     container_name: es02
     environment:
       - node.name=es02
+      - discovery.seed_hosts=es01
       - cluster.name=es-cluster
-      - cluster.initial_master_nodes=es01
+      - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512M -Xmx512M"
-      - "discovery.zen.ping.unicast.hosts=es01"
       - http.cors.enabled=true
       - http.cors.allow-origin=*
       - network.host=_eth0_
@@ -109,10 +110,10 @@ services:
       - config.reload.automatic=true
     pid: "host"
     volumes:
-      - /opt/elk/configs/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - /opt/elk/configs/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
-      - /opt/elk/configs/logstash/conf.d:/usr/share/logstash/config/conf.d
-      - logstash:/usr/share/logstash/data
+      - ./configs/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./configs/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./configs/logstash/conf.d:/usr/share/logstash/config/conf.d
+      - ./configs/logstash:/usr/share/logstash/data
     ports:
       - "5400:5400/udp"
       - "5401:5401/udp"
@@ -133,9 +134,9 @@ services:
     ports:
       - 9009:9000
     volumes:
-      - /opt/elk/data/nginx:/var/log/nginx
-      - /opt/elk/configs/filebeat/modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml
-      - /opt/elk/configs/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./data/nginx:/var/log/nginx
+      - ./configs/filebeat/modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml
+      - ./configs/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
     networks:
       - elastic
     depends_on:
